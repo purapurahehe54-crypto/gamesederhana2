@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mode Selection Screen */
+        .mode-selection {
+            display: block;
+        }
+
+        .mode-selection.hidden {
+            display: none;
+        }
+
+        .mode-title {
+            color: white;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .mode-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .mode-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 20px 30px;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: #f0f0f0;
+        }
+
+        .mode-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .mode-icon {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        /* Player Name Input Screen */
+        .name-input-screen {
+            display: none;
+        }
+
+        .name-input-screen.active {
+            display: block;
+        }
+
+        .name-input-title {
+            color: white;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .name-input-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-label {
+            display: block;
+            color: white;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+
+        .player-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-family: 'Poppins', sans-serif;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .player-input:focus {
+            border-color: white;
+            background: white;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .player-input::placeholder {
+            color: rgba(102, 126, 234, 0.5);
+            font-weight: 500;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .form-btn {
+            flex: 1;
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 25px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .form-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .form-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Game Screen */
+        .game-screen {
+            display: none;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mode-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Scoreboard */
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .score-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 12px 20px;
+            min-width: 110px;
+            flex: 1;
+            max-width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .score-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .score-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            color: white;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-icon {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            margin-right: 5px;
+        }
+
+        @keyframes scoreUp {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+                color: #FFD700;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .score-value.animate-score {
+            animation: scoreUp 0.5s ease;
+        }
+
+        .turn-indicator {
+            color: white;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(80px, 120px));
+            grid-gap: 10px;
+            margin: 0 auto 30px;
+            justify-content: center;
+            max-width: 400px;
+        }
+
+        .cell {
+            width: 100%;
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            font-size: clamp(2rem, 8vw, 3rem);
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .cell:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .cell.taken {
+            cursor: not-allowed;
+        }
+
+        .cell.taken:hover {
+            transform: none;
+        }
+
+        .cell.animate {
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .restart-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .restart-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-weight: 700;
+            color: #667eea;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .message.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .auto-restart-text {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #667eea;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .countdown {
+            display: inline-block;
+            min-width: 20px;
+            font-weight: 700;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .board {
+                grid-template-columns: repeat(3, minmax(70px, 100px));
+                grid-gap: 8px;
+            }
+
+            .score-card {
+                padding: 10px 15px;
+                min-width: 90px;
+            }
+
+            .restart-btn {
+                padding: 10px 25px;
+            }
+
+            .message {
+                padding: 25px 30px;
+            }
+
+            .game-info {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .board {
+                grid-template-columns: repeat(3, minmax(60px, 85px));
+                grid-gap: 6px;
+            }
+
+            .score-card {
+                padding: 8px 12px;
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Tic Tac Toe</h1>
+        
+        <!-- Mode Selection Screen -->
+        <div class="mode-selection" id="modeSelection">
+            <div class="mode-title">Pilih Mode Permainan</div>
+            <div class="mode-buttons">
+                <button class="mode-btn" id="vsComputerBtn">
+                    <span class="mode-icon">🤖</span>
+                    <span>Lawan Komputer</span>
+                </button>
+                <button class="mode-btn" id="vs1v1Btn">
+                    <span class="mode-icon">👥</span>
+                    <span>Mode 1v1</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Player Name Input Screen (for 1v1 mode) -->
+        <div class="name-input-screen" id="nameInputScreen">
+            <div class="name-input-title">Masukkan Nama Pemain</div>
+            <div class="name-input-form">
+                <div class="input-group">
+                    <label class="input-label">❌ Pemain 1 (X)</label>
+                    <input 
+                        type="text" 
+                        class="player-input" 
+                        id="player1Name" 
+                        placeholder="Contoh: Budi" 
+                        maxlength="15"
+                        autocomplete="off"
+                    >
+                </div>
+                <div class="input-group">
+                    <label class="input-label">⭕ Pemain 2 (O)</label>
+                    <input 
+                        type="text" 
+                        class="player-input" 
+                        id="player2Name" 
+                        placeholder="Contoh: Ani" 
+                        maxlength="15"
+                        autocomplete="off"
+                    >
+                </div>
+                <div class="form-buttons">
+                    <button class="form-btn secondary" id="backToModeBtn">← Kembali</button>
+                    <button class="form-btn" id="startGameBtn">Mulai Main 🎮</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="game-info">
+                <span class="mode-badge" id="modeBadge"></span>
+                <button class="back-btn" id="backBtn">← Kembali</button>
+            </div>
+
+            <div class="scoreboard">
+                <div class="score-card">
+                    <div class="score-label">
+                        <span class="player-icon">❌</span><span id="player1Label">Pemain X</span>
+                    </div>
+                    <div class="score-value" id="playerScore">0</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-label">
+                        <span class="player-icon">🤝</span>Seri
+                    </div>
+                    <div class="score-value" id="drawScore">0</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-label">
+                        <span class="player-icon">⭕</span><span id="player2Label">Pemain O</span>
+                    </div>
+                    <div class="score-value" id="aiScore">0</div>
+                </div>
+            </div>
+            
+            <div class="turn-indicator" id="turnIndicator">Giliran Anda (X)</div>
+            
+            <div class="board" id="board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+
+            <button class="restart-btn" id="restartBtn">🔄 Restart Game</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="message" id="message"></div>
+
+    <script>
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+        let gameMode = ''; // 'vsComputer' or '1v1'
+        const humanPlayer = 'X';
+        const aiPlayer = 'O';
+        let autoRestartTimer = null;
+        let countdownInterval = null;
+        let player1NameStr = '';
+        let player2NameStr = '';
+
+        let scores = {
+            player: 0,
+            ai: 0,
+            draw: 0
+        };
+
+        const winningConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        let audioContext;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'move':
+                    oscillator.frequency.value = 600;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                    
+                case 'win':
+                    const frequencies = [523, 659, 784, 1047];
+                    frequencies.forEach((freq, index) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        gain.gain.setValueAtTime(0.15, audioContext.currentTime + index * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.1 + 0.2);
+                        osc.start(audioContext.currentTime + index * 0.1);
+                        osc.stop(audioContext.currentTime + index * 0.1 + 0.2);
+                    });
+                    return;
+                    
+                case 'draw':
+                    oscillator.frequency.value = 400;
+                    oscillator.type = 'triangle';
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.4);
+                    break;
+            }
+        }
+
+        const modeSelection = document.getElementById('modeSelection');
+        const nameInputScreen = document.getElementById('nameInputScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const vsComputerBtn = document.getElementById('vsComputerBtn');
+        const vs1v1Btn = document.getElementById('vs1v1Btn');
+        const backToModeBtn = document.getElementById('backToModeBtn');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const player1NameInput = document.getElementById('player1Name');
+        const player2NameInput = document.getElementById('player2Name');
+        const backBtn = document.getElementById('backBtn');
+        const modeBadge = document.getElementById('modeBadge');
+        const player1Label = document.getElementById('player1Label');
+        const player2Label = document.getElementById('player2Label');
+        const cells = document.querySelectorAll('.cell');
+        const turnIndicator = document.getElementById('turnIndicator');
+        const restartBtn = document.getElementById('restartBtn');
+        const message = document.getElementById('message');
+        const overlay = document.getElementById('overlay');
+        const playerScoreEl = document.getElementById('playerScore');
+        const aiScoreEl = document.getElementById('aiScore');
+        const drawScoreEl = document.getElementById('drawScore');
+
+        vsComputerBtn.addEventListener('click', () => startGame('vsComputer'));
+        vs1v1Btn.addEventListener('click', showNameInput);
+        backToModeBtn.addEventListener('click', backToModeSelection);
+        startGameBtn.addEventListener('click', startGame1v1);
+        backBtn.addEventListener('click', backToMenu);
+        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+        restartBtn.addEventListener('click', restartGame);
+        overlay.addEventListener('click', hideMessage);
+
+        // Enter key untuk submit form
+        player1NameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                player2NameInput.focus();
+            }
+        });
+
+        player2NameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                startGame1v1();
+            }
+        });
+
+        function showNameInput() {
+            modeSelection.classList.add('hidden');
+            nameInputScreen.classList.add('active');
+            // Clear previous names
+            player1NameInput.value = '';
+            player2NameInput.value = '';
+            // Focus ke input pertama
+            setTimeout(() => player1NameInput.focus(), 100);
+        }
+
+        function backToModeSelection() {
+            nameInputScreen.classList.remove('active');
+            modeSelection.classList.remove('hidden');
+        }
+
+        function startGame1v1() {
+            // Ambil nama pemain atau gunakan default
+            player1NameStr = player1NameInput.value.trim() || 'Pemain 1';
+            player2NameStr = player2NameInput.value.trim() || 'Pemain 2';
+
+            // Mulai game dengan mode 1v1
+            startGame('1v1');
+        }
+
+        function startGame(mode) {
+            gameMode = mode;
+            nameInputScreen.classList.remove('active');
+            modeSelection.classList.add('hidden');
+            gameScreen.classList.add('active');
+
+            if (mode === 'vsComputer') {
+                modeBadge.textContent = '🤖 Lawan Komputer';
+                player1Label.textContent = 'Anda (X)';
+                player2Label.textContent = 'Komputer (O)';
+            } else {
+                modeBadge.textContent = '👥 Mode 1v1';
+                player1Label.textContent = ${player1NameStr} (X);
+                player2Label.textContent = ${player2NameStr} (O);
+            }
+
+            resetScores();
+            restartGame();
+        }
+
+        function backToMenu() {
+            // Clear timers saat kembali ke menu
+            if (autoRestartTimer) {
+                clearTimeout(autoRestartTimer);
+                autoRestartTimer = null;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            
+            gameScreen.classList.remove('active');
+            modeSelection.classList.remove('hidden');
+            hideMessage();
+        }
+
+        function resetScores() {
+            scores = { player: 0, ai: 0, draw: 0 };
+            playerScoreEl.textContent = '0';
+            aiScoreEl.textContent = '0';
+            drawScoreEl.textContent = '0';
+        }
+
+        function handleCellClick(e) {
+            const cell = e.target;
+            const index = cell.getAttribute('data-index');
+
+            if (gameBoard[index] !== '' || !gameActive) {
+                return;
+            }
+
+            // Untuk mode vs Computer, cegah klik saat giliran AI
+            if (gameMode === 'vsComputer' && currentPlayer === aiPlayer) {
+                return;
+            }
+
+            makeMove(index, currentPlayer);
+            playSound('move');
+
+            if (!checkResult()) {
+                if (gameMode === 'vsComputer') {
+                    if (currentPlayer === humanPlayer) {
+                        currentPlayer = aiPlayer;
+                        turnIndicator.textContent = 'Komputer berpikir...';
+                        setTimeout(aiMove, 500);
+                    } else {
+                        currentPlayer = humanPlayer;
+                        turnIndicator.textContent = 'Giliran Anda (X)';
+                    }
+                } else {
+                    // Mode 1v1
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    const currentPlayerName = currentPlayer === 'X' ? player1NameStr : player2NameStr;
+                    turnIndicator.textContent = Giliran ${currentPlayerName} (${currentPlayer});
+                }
+            }
+        }
+
+        function makeMove(index, player) {
+            gameBoard[index] = player;
+            cells[index].textContent = player;
+            cells[index].classList.add('taken', 'animate');
+        }
+
+        function aiMove() {
+            if (!gameActive) return;
+
+            let bestMove = getBestMove();
+            makeMove(bestMove, aiPlayer);
+            playSound('move');
+
+            if (!checkResult()) {
+                currentPlayer = humanPlayer;
+                turnIndicator.textContent = 'Giliran Anda (X)';
+            }
+        }
+
+        function getBestMove() {
+            for (let i = 0; i < gameBoard.length; i++) {
+                if (gameBoard[i] === '') {
+                    gameBoard[i] = aiPlayer;
+                    if (checkWinner(aiPlayer)) {
+                        gameBoard[i] = '';
+                        return i;
+                    }
+                    gameBoard[i] = '';
+                }
+            }
+
+            for (let i = 0; i < gameBoard.length; i++) {
+                if (gameBoard[i] === '') {
+                    gameBoard[i] = humanPlayer;
+                    if (checkWinner(humanPlayer)) {
+                        gameBoard[i] = '';
+                        return i;
+                    }
+                    gameBoard[i] = '';
+                }
+            }
+
+            if (gameBoard[4] === '') {
+                return 4;
+            }
+
+            const corners = [0, 2, 6, 8];
+            const availableCorners = corners.filter(i => gameBoard[i] === '');
+            if (availableCorners.length > 0) {
+                return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+            }
+
+            const availableMoves = gameBoard.map((val, idx) => val === '' ? idx : null).filter(val => val !== null);
+            return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+        }
+
+        function checkWinner(player) {
+            return winningConditions.some(condition => {
+                return condition.every(index => gameBoard[index] === player);
+            });
+        }
+
+        function checkResult() {
+            let roundWon = false;
+            let winner = '';
+
+            if (checkWinner('X')) {
+                roundWon = true;
+                if (gameMode === 'vsComputer') {
+                    winner = 'Anda';
+                } else {
+                    winner = player1NameStr;
+                }
+                scores.player++;
+                updateScore('player');
+                playSound('win');
+            } else if (checkWinner('O')) {
+                roundWon = true;
+                if (gameMode === 'vsComputer') {
+                    winner = 'Komputer';
+                } else {
+                    winner = player2NameStr;
+                }
+                scores.ai++;
+                updateScore('ai');
+                playSound('win');
+            }
+
+            if (roundWon) {
+                showMessage(🎉 ${winner} Menang!);
+                gameActive = false;
+                return true;
+            }
+
+            if (!gameBoard.includes('')) {
+                scores.draw++;
+                updateScore('draw');
+                playSound('draw');
+                showMessage('🤝 Seri!');
+                gameActive = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        function updateScore(type) {
+            let scoreElement;
+            if (type === 'player') {
+                scoreElement = playerScoreEl;
+                playerScoreEl.textContent = scores.player;
+            } else if (type === 'ai') {
+                scoreElement = aiScoreEl;
+                aiScoreEl.textContent = scores.ai;
+            } else if (type === 'draw') {
+                scoreElement = drawScoreEl;
+                drawScoreEl.textContent = scores.draw;
+            }
+
+            scoreElement.classList.add('animate-score');
+            setTimeout(() => {
+                scoreElement.classList.remove('animate-score');
+            }, 500);
+        }
+
+        function showMessage(text) {
+            message.innerHTML = text + '<div class="auto-restart-text">Restart otomatis dalam <span class="countdown" id="countdown">3</span> detik...</div>';
+            overlay.classList.add('show');
+            message.classList.add('show');
+            
+            // Mulai countdown
+            let seconds = 3;
+            const countdownEl = document.getElementById('countdown');
+            
+            countdownInterval = setInterval(() => {
+                seconds--;
+                if (countdownEl) {
+                    countdownEl.textContent = seconds;
+                }
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+            
+            // Auto restart setelah 3 detik
+            autoRestartTimer = setTimeout(() => {
+                hideMessage();
+                restartGame();
+            }, 3000);
+        }
+
+        function hideMessage() {
+            // Clear timers jika ada
+            if (autoRestartTimer) {
+                clearTimeout(autoRestartTimer);
+                autoRestartTimer = null;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            
+            overlay.classList.remove('show');
+            message.classList.remove('show');
+        }
+
+        function restartGame() {
+            currentPlayer = humanPlayer;
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            
+            if (gameMode === 'vsComputer') {
+                turnIndicator.textContent = 'Giliran Anda (X)';
+            } else {
+                turnIndicator.textContent = Giliran ${player1NameStr} (X);
+            }
+
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('taken', 'animate');
+            });
+
+            hideMessage();
+        }
+    </script>
+</body>
+</html>
